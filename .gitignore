@@ -1,5 +1,6 @@
 # Temp project files
 .vscode/
+db/
 
 # Logs
 logs
