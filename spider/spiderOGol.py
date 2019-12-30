@@ -9,6 +9,7 @@ class OGolSpider(scrapy.Spider):
         #Scraping the data
         teamsHome = response.xpath('//tr//td[re:test(@class, "text home")]//div//a[re:test(@href, "equipa.php?")]/text()').getall()
         teamsAway = response.xpath('//tr//td[re:test(@class, "text away")]//div//a[re:test(@href, "equipa.php?")]/text()').getall()
+        editions = response.xpath('//tr//td[re:test(@class, "edition")]//div//a[re:test(@href, "edition.php?")]/text()').getall()
         gamesUrls = response.xpath('//tr//td//a[re:test(@href, "match_live.php?")]/@href').getall() + response.xpath('//tr//td[re:test(@class, "vs")]//a[re:test(@href, "jogo.php?")]/@href').getall()
         dates = response.xpath('//tr//td[re:test(@class, "date")]/text()').getall()
         datesPhasesAndHours = response.xpath('//tr//td/text()').getall()
@@ -19,7 +20,7 @@ class OGolSpider(scrapy.Spider):
         gamesUrls = [url.replace('/', '') for url in gamesUrls]
         hours = [hour.replace(':', 'h') for hour in hours]
         dates = [date.replace('-', '/') for date in dates]
-        dataExport = [[home]+[away]+[hour]+[date]+[url] for home, away, hour, date, url in zip(teamsHome, teamsAway, hours, dates, gamesUrls)]
+        dataExport = [[home]+[away]+[hour]+[date]+[edition]+[url] for home, away, hour, date, edition, url in zip(teamsHome, teamsAway, hours, dates, editions, gamesUrls)]
         
         print('\nJogos Disponíveis:', dataExport, '\n')
         print('Número de Jogos:', len(dataExport), '\n')
