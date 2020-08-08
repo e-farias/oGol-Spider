@@ -1,2 +1,5 @@
-# image-maker
-Projeto para fazer imagens automatizadas dos principais jogos de futebol do dia. Feito com Python, Scrapy, JavaScript &amp; ❤️.
+# oGol Spider
+
+Um **spider** simples que pega as principais informações dos jogos de futebol disponíveis em www.ogol.com.br/proximos_jogos.php e salva  em um arquivo .json.
+
+Feito com **Python**, **Scrapy** &amp; ❤️.
