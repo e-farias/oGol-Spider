@@ -1,12 +1,15 @@
+import os
+import json
 import scrapy
-from scrapy.crawler import CrawlerProcess
 
 class OGolSpider(scrapy.Spider):
+    
     name = 'oGol'
     start_urls = ['https://www.ogol.com.br/proximos_jogos.php']
 
     def parse(self, response):
-        #Scraping the data
+        
+        # Get the data
         teamsHome = response.xpath('//tr//td[re:test(@class, "text home")]//div//a[re:test(@href, "equipa.php?")]/text()').getall()
         teamsAway = response.xpath('//tr//td[re:test(@class, "text away")]//div//a[re:test(@href, "equipa.php?")]/text()').getall()
         editions = response.xpath('//tr//td[re:test(@class, "edition")]//div//a[re:test(@href, "edition.php?")]/text()').getall()
@@ -16,17 +19,29 @@ class OGolSpider(scrapy.Spider):
         hours = [datesPhasesAndHours[i] for i in range(1, len(datesPhasesAndHours), 3)]
         #hours = [response.xpath('//tr//td/text()').getall()[i] for i in range(1, len(response.xpath('//tr//td/text()').getall()), 3)]
 
-        #Formatting and cleaning data
+        # Formatting data
         gamesUrls = [url.replace('/', '') for url in gamesUrls]
         hours = [hour.replace(':', 'h') for hour in hours]
         dates = [date.replace('-', '/') for date in dates]
-        dataExport = [[home]+[away]+[hour]+[date]+[edition]+[url] for home, away, hour, date, edition, url in zip(teamsHome, teamsAway, hours, dates, editions, gamesUrls)]
         
-        print('\nJogos Disponíveis:', dataExport, '\n')
-        print('Número de Jogos:', len(dataExport), '\n')
+        data = []
+        
+        for home, away, hour, date, edition, url in zip(teamsHome, teamsAway, hours, dates, editions, gamesUrls):
+            
+            data.append({
+                "home": home,
+                "away": away,
+                "edition": edition,
+                "date": date,
+                "time": hour,
+                "url": "https://www.ogol.com.br/{}".format(url)
+            })
+        
+        # Save the data to a json file
+        path = r'{}\spiderOGol.json'.format(os.getcwd())
+        with open(path, "w", encoding="utf-8") as fp:
+            json.dump(data, fp, ensure_ascii=False)
+        print("The json file has been saved. See him at " + path)
 
         pass
-    
-process = CrawlerProcess()
-process.crawl(OGolSpider)
-process.start()
+
